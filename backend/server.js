@@ -12,6 +12,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Welcome to Bhadohi Aluminium Backend API');
+}); // Root endpoint for testing
+
 // Create uploads folder if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
@@ -210,9 +214,5 @@ app.delete('/api/products/:id', verifyAdmin, async (req, res) => {
     res.status(500).json({ message: 'Error deleting product', error: err.message });
   }
 });
-
-app.get('/', (req, res) => {
-  res.send('Welcome to Bhadohi Aluminium Backend API');
-}); 
 
 app.listen(5000, () => console.log('Server running on port 5000'));
