@@ -13,11 +13,11 @@ const Contact = () => {
         </p>
         <div style={{ marginBottom: '1.5rem' }}>
           <h3 style={{ fontSize: '1.5rem', color: '#1a202c' }}>Get in Touch</h3>
-          <p><strong>Phone:</strong> +91 1234567890</p>
-          <p><strong>Email:</strong> info@bhadohialuminium.com</p>
+          <p><strong>Phone:</strong> +91 9839147949</p>
+          <p><strong>Email:</strong> rachit.rugscarpet@gmail.com</p>
           <p><strong>Address:</strong> Mamdevpur Road, Maryad Patti, Bhadohi, 221401, India </p>
           <p>
-            <a href="https://wa.me/911234567890" target="_blank" rel="noopener noreferrer" style={{ color: '#38a169', textDecoration: 'none' }}>
+            <a href="https://wa.me/9839147949" target="_blank" rel="noopener noreferrer" style={{ color: '#38a169', textDecoration: 'none' }}>
               WhatsApp Us
             </a>
           </p>
