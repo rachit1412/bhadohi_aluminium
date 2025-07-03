@@ -216,7 +216,7 @@ const AdminPanel = () => {
           {products.map(product => (
             <div key={product._id} className="product-card">
               <img 
-                src={`https://bhadohi-aluminium-yczh.vercel.app/${product.image}`} 
+                src={`https://bhadohi-aluminium-yczh.vercel.app${product.image}`} 
                 alt={product.name} 
                 onError={(e) => { e.target.src = 'https://via.placeholder.com/250?text=Image+Not+Found'; }} 
               />

@@ -23,7 +23,7 @@ const ProductDetails = () => {
         <h1>{product.name}</h1>
         <div className="product-details">
           <img 
-            src={`https://bhadohi-aluminium-yczh.vercel.app/${product.image}`} 
+            src={`https://bhadohi-aluminium-yczh.vercel.app${product.image}`} 
             alt={product.name} 
             onError={(e) => { e.target.src = 'https://via.placeholder.com/250?text=Image+Not+Found'; }} 
           />
