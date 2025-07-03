@@ -7,7 +7,10 @@ const multer = require('multer');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+   origin: ["http://localhost:3000", "https://bhadohi-aluminium-fbm1.vercel.app/"]
+})); // Adjust origin as needed
+
 app.use(express.json());
 
 // MongoDB connection with detailed error handling
