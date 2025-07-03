@@ -4,27 +4,11 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.send('Welcome to Bhadohi Aluminium Backend API');
-}); // Root endpoint for testing
-
-// Create uploads folder if it doesn't exist
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log('Created uploads folder');
-}
-
-// Serve uploaded images statically
-app.use('/uploads', express.static(uploadsDir));
 
 // MongoDB connection with detailed error handling
 mongoose.connect(process.env.MONGO_URI, { 
@@ -48,7 +32,10 @@ mongoose.connect(process.env.MONGO_URI, {
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  image: { type: String, default: '' },
+  image: { 
+    data: { type: Buffer, default: null }, 
+    contentType: { type: String, default: '' } 
+  },
   cost: {
     material: { type: Number, required: true },
     labour: { type: Number, required: true },
@@ -60,19 +47,12 @@ const productSchema = new mongoose.Schema({
 const Product = mongoose.model('Product', productSchema);
 
 // Multer setup for image uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
+const storage = multer.memoryStorage();
 const upload = multer({ 
   storage,
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = filetypes.test(file.originalname.toLowerCase().split('.').pop());
     const mimetype = filetypes.test(file.mimetype);
     if (extname && mimetype) {
       cb(null, true);
@@ -114,8 +94,13 @@ const verifyAdmin = (req, res, next) => {
 app.get('/api/products', async (req, res) => {
   try {
     const products = await Product.find();
+    // Map products to include image URL
+    const productsWithImageUrl = products.map(product => ({
+      ...product._doc,
+      image: product.image.data ? `/api/products/${product._id}/image` : ''
+    }));
     console.log('Fetched products:', products.length, 'items');
-    res.json(products);
+    res.json(productsWithImageUrl);
   } catch (err) {
     console.error('Error fetching products:', err.message);
     res.status(500).json({ message: 'Error fetching products', error: err.message });
@@ -126,11 +111,31 @@ app.get('/api/products/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
+    // Include image URL
+    const productWithImageUrl = {
+      ...product._doc,
+      image: product.image.data ? `/api/products/${product._id}/image` : ''
+    };
     console.log('Fetched product:', product._id);
-    res.json(product);
+    res.json(productWithImageUrl);
   } catch (err) {
     console.error('Error fetching product:', err.message);
     res.status(500).json({ message: 'Error fetching product', error: err.message });
+  }
+});
+
+// Route to serve image
+app.get('/api/products/:id/image', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product || !product.image.data) {
+      return res.status(404).json({ message: 'Image not found' });
+    }
+    res.set('Content-Type', product.image.contentType);
+    res.send(product.image.data);
+  } catch (err) {
+    console.error('Error fetching image:', err.message);
+    res.status(500).json({ message: 'Error fetching image', error: err.message });
   }
 });
 
@@ -157,7 +162,7 @@ app.post('/api/products', verifyAdmin, upload.single('image'), async (req, res) 
       return res.status(400).json({ message: 'All cost fields are required' });
     }
 
-    const image = req.file ? `/uploads/${req.file.filename}` : '';
+    const image = req.file ? { data: req.file.buffer, contentType: req.file.mimetype } : { data: null, contentType: '' };
     const total = Number(material) + Number(labour) + Number(transport) + Number(miscellaneous);
 
     const product = new Product({ 
@@ -168,7 +173,10 @@ app.post('/api/products', verifyAdmin, upload.single('image'), async (req, res) 
     });
     await product.save();
     console.log('Product saved successfully:', product._id);
-    res.json(product);
+    res.json({
+      ...product._doc,
+      image: product.image.data ? `/api/products/${product._id}/image` : ''
+    });
   } catch (err) {
     console.error('Error adding product:', err.message);
     res.status(500).json({ message: 'Error adding product', error: err.message });
@@ -187,16 +195,23 @@ app.put('/api/products/:id', verifyAdmin, upload.single('image'), async (req, re
       return res.status(400).json({ message: 'Invalid cost format', error: err.message });
     }
 
-    const image = req.file ? `/uploads/${req.file.filename}` : req.body.image;
+    const image = req.file ? { data: req.file.buffer, contentType: req.file.mimetype } : undefined;
     const total = Number(parsedCost.material) + Number(parsedCost.labour) + Number(parsedCost.transport) + Number(parsedCost.miscellaneous);
 
-    const product = await Product.findByIdAndUpdate(req.params.id, 
-      { name, description, image, cost: { ...parsedCost, total } }, 
-      { new: true }
-    );
+    const updateData = { 
+      name, 
+      description, 
+      cost: { ...parsedCost, total } 
+    };
+    if (image) updateData.image = image;
+
+    const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!product) return res.status(404).json({ message: 'Product not found' });
     console.log('Product updated:', product._id);
-    res.json(product);
+    res.json({
+      ...product._doc,
+      image: product.image.data ? `/api/products/${product._id}/image` : ''
+    });
   } catch (err) {
     console.error('Error updating product:', err.message);
     res.status(500).json({ message: 'Error updating product', error: err.message });
