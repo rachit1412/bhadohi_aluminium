@@ -62,6 +62,10 @@ const upload = multer({
   }
 });
 
+app.get('/', (req, res) => {
+  res.send('Welcome to Bhadohi Aluminium Company API');
+});
+
 // Admin Authentication
 const ADMIN_PASSWORD_HASH = bcrypt.hashSync('admin12345', 10);
 
