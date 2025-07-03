@@ -10,7 +10,7 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/admin/login', { password });
+      const res = await axios.post('https://bhadohi-aluminium-yczh.vercel.app/api/admin/login', { password });
       localStorage.setItem('token', res.data.token);
       navigate('/admin');
     } catch (err) {

@@ -9,7 +9,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/products/${id}`)
+    axios.get(`https://bhadohi-aluminium-yczh.vercel.app/api/products/${id}`)
       .then(res => setProduct(res.data))
       .catch(err => console.error('Error fetching product:', err));
   }, [id]);
@@ -23,7 +23,7 @@ const ProductDetails = () => {
         <h1>{product.name}</h1>
         <div className="product-details">
           <img 
-            src={`http://localhost:5000${product.image}`} 
+            src={`https://bhadohi-aluminium-yczh.vercel.app/${product.image}`} 
             alt={product.name} 
             onError={(e) => { e.target.src = 'https://via.placeholder.com/250?text=Image+Not+Found'; }} 
           />
@@ -47,3 +47,5 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
+
+// http://localhost:5000 

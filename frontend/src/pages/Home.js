@@ -9,7 +9,7 @@ const Home = () => {
   const [products, setProducts] = React.useState([]);
 
   React.useEffect(() => {
-    axios.get('http://localhost:5000/api/products')
+    axios.get('https://bhadohi-aluminium-yczh.vercel.app/api/products')
       .then(res => setProducts(res.data))
       .catch(err => console.error('Error fetching products:', err));
   }, []);

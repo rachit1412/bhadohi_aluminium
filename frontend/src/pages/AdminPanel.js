@@ -24,7 +24,7 @@ const AdminPanel = () => {
       return;
     }
 
-    axios.get('http://localhost:5000/api/products', {
+    axios.get('https://bhadohi-aluminium-yczh.vercel.app/api/products', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -73,7 +73,7 @@ const AdminPanel = () => {
 
     try {
       if (id) {
-        const res = await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
+        const res = await axios.put(`https://bhadohi-aluminium-yczh.vercel.app/api/products/${id}`, formData, {
           headers: { 
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
@@ -82,7 +82,7 @@ const AdminPanel = () => {
         setSuccess('Product updated successfully!');
         setProducts(products.map(p => (p._id === id ? res.data : p)));
       } else {
-        const res = await axios.post('http://localhost:5000/api/products', formData, {
+        const res = await axios.post('https://bhadohi-aluminium-yczh.vercel.app/api/products', formData, {
           headers: { 
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
@@ -132,7 +132,7 @@ const AdminPanel = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
+      await axios.delete(`https://bhadohi-aluminium-yczh.vercel.app/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSuccess('Product deleted successfully!');
@@ -216,7 +216,7 @@ const AdminPanel = () => {
           {products.map(product => (
             <div key={product._id} className="product-card">
               <img 
-                src={`http://localhost:5000${product.image}`} 
+                src={`https://bhadohi-aluminium-yczh.vercel.app/${product.image}`} 
                 alt={product.name} 
                 onError={(e) => { e.target.src = 'https://via.placeholder.com/250?text=Image+Not+Found'; }} 
               />

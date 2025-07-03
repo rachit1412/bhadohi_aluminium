@@ -5,7 +5,7 @@ const ProductCard = ({ product }) => {
   return (
     <div className="product-card">
       <img 
-        src={`http://localhost:5000${product.image}`} 
+        src={`https://bhadohi-aluminium-yczh.vercel.app/${product.image}`} 
         alt={product.name} 
         onError={(e) => { e.target.src = 'https://via.placeholder.com/250?text=Image+Not+Found'; }} 
       />
