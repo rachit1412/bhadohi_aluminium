@@ -22,6 +22,21 @@ const Contact = () => {
             </a>
           </p>
         </div>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h3 style={{ fontSize: '1.5rem', color: '#1a202c' }}>Contact Persons</h3>
+          <p><strong>Name:</strong> Sanjay Jaiswal <br /><strong>Phone:</strong> +91 9839147949</p>
+          <p>
+            <a href="https://wa.me/9839147949" target="_blank" rel="noopener noreferrer" style={{ color: '#38a169', textDecoration: 'none' }}>
+              WhatsApp Sanjay
+            </a>
+          </p>
+          <p><strong>Name:</strong> Vijay Jaiswal <br /><strong>Phone:</strong> +91 7754004012</p>
+          <p>
+            <a href="https://wa.me/7754004012" target="_blank" rel="noopener noreferrer" style={{ color: '#38a169', textDecoration: 'none' }}>
+              WhatsApp Vijay
+            </a>
+          </p>
+        </div>
         <div style={{ textAlign: 'center' }}>
           <Link to="/" className="btn btn-home">Go to Home</Link>
         </div>
